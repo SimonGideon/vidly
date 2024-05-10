@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import Like from "./common/like";
+import Pagination from "./pagination";
+import _ from "lodash";
+import { paginate } from "../utils/paginate";
 
 const Movies = () => {
   const [movies, setMovies] = useState(getMovies());
+  const [pageSize, setPageSize] = useState(4);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (movie) => {
     const newMovies = movies.filter((m) => m._id !== movie._id);
     setMovies(newMovies);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const handleLike = (movie) => {
@@ -17,6 +26,21 @@ const Movies = () => {
     newMovies[index].liked = !newMovies[index].liked;
     setMovies(newMovies);
   };
+
+  const handleNext = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevious = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  // pagination
+
+  const itemsCount = movies.length;
+  const pageCount = Math.ceil(itemsCount / pageSize) + 1;
+  const pages = _.range(1, pageCount);
+  const PaginatedMovies = paginate(movies, currentPage, pageSize);
 
   return (
     <div>
@@ -39,7 +63,7 @@ const Movies = () => {
               </tr>
             </thead>
             <tbody>
-              {movies.map((movie) => (
+              {PaginatedMovies.map((movie) => (
                 <tr key={movie._id}>
                   <td>{movie.title}</td>
                   <td>{movie.genre.name}</td>
@@ -49,7 +73,7 @@ const Movies = () => {
                     <Like movie={movie} handleLike={() => handleLike(movie)} />
                     <button
                       onClick={() => handleDelete(movie)}
-                      className="btn btn-danger btn-sm m-1"
+                      className="btn btn-danger btn-sm"
                     >
                       Delete
                     </button>
@@ -58,6 +82,16 @@ const Movies = () => {
               ))}
             </tbody>
           </table>
+          <div>
+            <Pagination
+              onPageChange={handlePageChange}
+              currentPage={currentPage}
+              pages={pages}
+              pageCount={pageCount}
+              handleNext={handleNext}
+              handlePrevious={handlePrevious}
+            />
+          </div>
         </div>
       )}
     </div>

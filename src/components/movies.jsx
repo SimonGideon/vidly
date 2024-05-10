@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
-import Like from "./common/like";
-import Pagination from "./pagination";
+import Pagination from "./common/pagination";
 import _ from "lodash";
 import { paginate } from "../utils/paginate";
-import SideList from "./sideList";
+import ListGroup from "./common/listGroups";
+import MoviesTable from "./moviesTable";
+import { getGenres } from "../services/fakeGenreService";
 
 const Movies = () => {
   const [movies, setMovies] = useState(getMovies());
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedGenre, setSelectedGenre] = useState("All");
 
   const handleDelete = (movie) => {
     const newMovies = movies.filter((m) => m._id !== movie._id);
@@ -36,17 +38,6 @@ const Movies = () => {
     setCurrentPage(currentPage - 1);
   };
 
-  // ongenre
-  const handleGenreSelect = (genre) => {
-    if (genre === "All") {
-      setMovies(getMovies());
-      return;
-    }
-    const newMovies = getMovies().filter(
-      (movie) => movie.genre.name === genre.name
-    );
-    setMovies(newMovies);
-  };
   // pagination
 
   const itemsCount = movies.length;
@@ -54,9 +45,31 @@ const Movies = () => {
   const pages = _.range(1, pageCount);
   const PaginatedMovies = paginate(movies, currentPage, pageSize);
 
+  // sideList
+  const handleSelectedGenre = (genre) => {
+    if (genre === "All") {
+      setMovies(getMovies());
+      return;
+    }
+    const newMovies = getMovies().filter(
+      (movie) => movie.genre.name === genre.name
+    );
+    setCurrentPage(1);
+    setMovies(newMovies);
+  };
+  const genres = getGenres();
+  const handleSelectedItem = (genre) => {
+    genre === "All" ? setSelectedGenre("All") : setSelectedGenre(genre.name);
+    handleSelectedGenre(genre);
+  };
+
   return (
     <div className="movie-container">
-      <SideList selectGenre={handleGenreSelect} />
+      <ListGroup
+        genres={genres}
+        handleSelectedItem={handleSelectedItem}
+        selectedGenre={selectedGenre}
+      />
       {movies.length === 0 ? (
         <p className="text-danger mt-3">There are no movies in the database.</p>
       ) : (
@@ -65,36 +78,12 @@ const Movies = () => {
           <h3 className="text-success">
             Showing {movies.length} movies in the database.
           </h3>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Stock</th>
-                <th>Rate</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PaginatedMovies.map((movie) => (
-                <tr key={movie._id}>
-                  <td>{movie.title}</td>
-                  <td>{movie.genre.name}</td>
-                  <td>{movie.numberInStock}</td>
-                  <td>{movie.dailyRentalRate}</td>
-                  <td className="actions">
-                    <Like movie={movie} handleLike={() => handleLike(movie)} />
-                    <button
-                      onClick={() => handleDelete(movie)}
-                      className="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <MoviesTable
+            movies={movies}
+            handleDelete={handleDelete}
+            handleLike={handleLike}
+            PaginatedMovies={PaginatedMovies}
+          />
           <div>
             <Pagination
               onPageChange={handlePageChange}

@@ -4,6 +4,7 @@ import Like from "./common/like";
 import Pagination from "./pagination";
 import _ from "lodash";
 import { paginate } from "../utils/paginate";
+import SideList from "./sideList";
 
 const Movies = () => {
   const [movies, setMovies] = useState(getMovies());
@@ -35,6 +36,17 @@ const Movies = () => {
     setCurrentPage(currentPage - 1);
   };
 
+  // ongenre
+  const handleGenreSelect = (genre) => {
+    if (genre === "All") {
+      setMovies(getMovies());
+      return;
+    }
+    const newMovies = getMovies().filter(
+      (movie) => movie.genre.name === genre.name
+    );
+    setMovies(newMovies);
+  };
   // pagination
 
   const itemsCount = movies.length;
@@ -43,7 +55,8 @@ const Movies = () => {
   const PaginatedMovies = paginate(movies, currentPage, pageSize);
 
   return (
-    <div>
+    <div className="movie-container">
+      <SideList selectGenre={handleGenreSelect} />
       {movies.length === 0 ? (
         <p className="text-danger mt-3">There are no movies in the database.</p>
       ) : (

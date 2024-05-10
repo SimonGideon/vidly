@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import PropTypes from "prop-types";
 const Pagination = (props) => {
   const {
     currentPage,
@@ -10,7 +11,7 @@ const Pagination = (props) => {
     handlePrevious,
   } = props;
 
-  if (pageCount <= 1) return null;
+  if (pageCount <= 2) return null;
   return (
     <nav className="text-centre" aria-label="Page navigation example">
       <ul className="pagination">
@@ -53,4 +54,12 @@ const Pagination = (props) => {
   );
 };
 
+Pagination.propTypes = {
+  currentPage: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  pages: PropTypes.array.isRequired,
+  pageCount: PropTypes.number.isRequired,
+  handleNext: PropTypes.func.isRequired,
+  handlePrevious: PropTypes.func.isRequired,
+};
 export default Pagination;

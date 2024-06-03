@@ -12,7 +12,7 @@ const Movies = () => {
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenre, setSelectedGenre] = useState("All");
-
+  const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
   const handleDelete = (movie) => {
     const newMovies = movies.filter((m) => m._id !== movie._id);
     setMovies(newMovies);
@@ -37,6 +37,13 @@ const Movies = () => {
   const handlePrevious = () => {
     setCurrentPage(currentPage - 1);
   };
+
+  // sorting
+  // sorting
+  const handleSort = (path) => {
+    setSortColumn({ path, order: "asc" });
+  };
+  const sorted = _.orderBy(movies, [sortColumn.path], [sortColumn.order]);
 
   // pagination
 
@@ -80,9 +87,10 @@ const Movies = () => {
           </h3>
           <MoviesTable
             movies={movies}
-            handleDelete={handleDelete}
-            handleLike={handleLike}
+            onDelete={handleDelete}
+            onLike={handleLike}
             PaginatedMovies={PaginatedMovies}
+            onSort={handleSort}
           />
           <div>
             <Pagination

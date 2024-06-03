@@ -14,6 +14,7 @@ const ListGroup = (props) => {
           onClick={() => {
             handleSelectedItem("All");
           }}
+          key={13}
           className={
             selectedGenre === "All"
               ? "list-group-item active"
@@ -25,7 +26,7 @@ const ListGroup = (props) => {
         </li>
         {genres.map((genre) => (
           <li
-            key={genre[valueProperty]}
+            key={genre._id}
             onClick={() => handleSelectedItem(genre)}
             className={
               genre[textProperty] === selectedGenre
@@ -41,7 +42,7 @@ const ListGroup = (props) => {
   );
 };
 
-ListGroup.defaultProps = {
+ListGroup.defaultParameters = {
   textProperty: "name",
   valueProperty: "_id",
 };

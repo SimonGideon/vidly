@@ -1,5 +1,7 @@
 import { useState } from "react";
 import InputFields from "./common/inputFields";
+import Joi from "joi-browser";
+import { schema } from "joi-browser";
 const LoginForm = () => {
   // state to store username and password
   const [credentials, setCredentials] = useState({
@@ -8,13 +10,22 @@ const LoginForm = () => {
     error: "",
   });
 
+  // Joi schema to validate the form
+  schema = {
+    username: Joi.string().required().label("Username"),
+    password: Joi.string().required().label("Password"),
+  };
+
   const validate = () => {
+    const options = { abortEarly: false };
+    const { error } = Joi.validate(credentials, schema, options);
+    if (!error) return null;
+
     const errors = {};
-    if (credentials.username.trim() === "")
-      errors.username = "Username is required";
-    if (credentials.password.trim() === "")
-      errors.password = "Password is required";
-    return Object.keys(errors).length === 0 ? null : errors;
+    for (let item of error.details) {
+      errors[item.path[0]] = item.message;
+      return errors;
+    }
   };
 
   const handleSubmit = (e) => {

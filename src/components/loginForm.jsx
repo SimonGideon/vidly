@@ -37,12 +37,16 @@ const LoginForm = () => {
           value={credentials.username}
           onChange={handleChange}
           type="text"
+          label={"Username"}
+          error={credentials.error && credentials.error.username}
         />
         <InputFields
           name="password"
           value={credentials.password}
           onChange={handleChange}
           type="password"
+          label={"Password"}
+          error={credentials.error && credentials.error.password}
         />
         <button className="btn btn-primary button m-2">Login</button>
       </form>

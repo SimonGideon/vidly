@@ -1,7 +1,7 @@
-const InputFields = ({ name, value, onChange, type }) => {
+const InputFields = ({ name, value, onChange, type, label, error }) => {
   return (
     <div className="form-group m-2">
-      <label htmlFor="username">Username</label>
+      <label htmlFor={name}>{label}</label>
       <input
         id={name}
         value={value}
@@ -10,6 +10,7 @@ const InputFields = ({ name, value, onChange, type }) => {
         type={type}
         className="form-control"
       />
+      {error && <div className="text-danger">{error}</div>}
     </div>
   );
 };
